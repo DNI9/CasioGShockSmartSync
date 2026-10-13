@@ -1,3 +1,7 @@
+package org.avmedia.gshockGoogleSync.ui.time
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -6,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.delay
+import org.avmedia.gshockGoogleSync.theme.chronoLcdTypography
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -13,27 +18,26 @@ import java.util.Locale
 
 @Composable
 fun RealTimeClock(modifier: Modifier = Modifier, offsetMs: Long = 0L) {
-    // State to hold the current time
     var currentTime by remember(offsetMs) { mutableStateOf(getCurrentTime(getSystemTimeFormat(), offsetMs)) }
 
-    // LaunchedEffect to update time every second
     LaunchedEffect(offsetMs) {
         while (true) {
-            delay(1000L) // Delay for 1 second
+            delay(1000L)
             currentTime = getCurrentTime(getSystemTimeFormat(), offsetMs)
         }
     }
 
-    // Display the current time
-    AppTextExtraLarge(
+    Text(
         text = currentTime,
+        style = MaterialTheme.chronoLcdTypography.lcdDisplayHero,
+        color = MaterialTheme.colorScheme.onSurface,
         modifier = modifier
     )
 }
 
 enum class TimeFormat(val pattern: String) {
-    TwelveHour("h:mm:ss a"), // 12-hour format without AM/PM
-    TwentyFourHour("H:mm:ss") // 24-hour format
+    TwelveHour("h:mm:ss a"),
+    TwentyFourHour("H:mm:ss")
 }
 
 fun getCurrentTime(format: TimeFormat, offsetMs: Long = 0L): String {
@@ -42,13 +46,10 @@ fun getCurrentTime(format: TimeFormat, offsetMs: Long = 0L): String {
 }
 
 fun getSystemTimeFormat(): TimeFormat {
-    // Get the short time format pattern from the system's DateFormat
     val pattern = (DateFormat.getTimeInstance(DateFormat.SHORT) as SimpleDateFormat).toPattern()
-
-    // Return the appropriate TimeFormat enum based on the presence of "a" in the pattern
     return if (pattern.contains("a")) {
-        TimeFormat.TwelveHour // 12-hour format
+        TimeFormat.TwelveHour
     } else {
-        TimeFormat.TwentyFourHour // 24-hour format
+        TimeFormat.TwentyFourHour
     }
 }

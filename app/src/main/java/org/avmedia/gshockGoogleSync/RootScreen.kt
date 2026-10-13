@@ -43,35 +43,46 @@ fun RootScreen(
             .fillMaxSize()
             .padding(contentPadding)
     ) {
-        when (currentScreen) {
-            AppScreen.INITIAL -> {
-                PreConnectionScreen()
-                LaunchedEffect(Unit) {
-                    viewModel.checkPairedDevices()
+        androidx.compose.animation.AnimatedContent(
+            targetState = currentScreen,
+            transitionSpec = {
+                (androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(300)) +
+                        androidx.compose.animation.scaleIn(initialScale = 0.96f, animationSpec = androidx.compose.animation.core.tween(300)))
+                    .togetherWith(androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(200)) +
+                            androidx.compose.animation.scaleOut(targetScale = 1.02f, animationSpec = androidx.compose.animation.core.tween(200)))
+            },
+            label = "RootScreenTransition"
+        ) { screen ->
+            when (screen) {
+                AppScreen.INITIAL -> {
+                    PreConnectionScreen()
+                    LaunchedEffect(Unit) {
+                        viewModel.checkPairedDevices()
+                    }
                 }
-            }
 
-            AppScreen.PRE_CONNECTION -> {
-                PreConnectionScreen()
-            }
+                AppScreen.PRE_CONNECTION -> {
+                    PreConnectionScreen()
+                }
 
-            AppScreen.CONTENT_SELECTOR -> {
-                RootContentSelector(
-                    viewModel = viewModel,
-                    onUnlocked = { viewModel.onUnlockCover() }
-                )
-            }
+                AppScreen.CONTENT_SELECTOR -> {
+                    RootContentSelector(
+                        viewModel = viewModel,
+                        onUnlocked = { viewModel.onUnlockCover() }
+                    )
+                }
 
-            AppScreen.MAIN_NAVIGATION -> {
-                BottomNavigationBarWithPermissions(repository = viewModel.repository)
-            }
+                AppScreen.MAIN_NAVIGATION -> {
+                    BottomNavigationBarWithPermissions(repository = viewModel.repository)
+                }
 
-            AppScreen.RUN_ACTIONS -> {
-                RunActionsScreen()
-            }
+                AppScreen.RUN_ACTIONS -> {
+                    RunActionsScreen()
+                }
 
-            AppScreen.ERROR -> {
-                PreConnectionScreen()
+                AppScreen.ERROR -> {
+                    PreConnectionScreen()
+                }
             }
         }
     }

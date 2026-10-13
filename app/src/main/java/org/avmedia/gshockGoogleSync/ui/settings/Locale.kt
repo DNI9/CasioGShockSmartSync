@@ -64,7 +64,9 @@ fun Locale(
             WatchFeature(id = "locale.time_format") {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
                 ) {
                     AppTextLarge(
                         text = stringResource(
@@ -75,46 +77,32 @@ fun Locale(
                             .padding(end = 12.dp)
                     )
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically // Aligns children vertically in the center
-                    ) {
-                        RadioButton(
-                            selected = timeFormat == SettingsViewModel.Locale.TimeFormat.TWELVE_HOURS,
-                            onClick = {
-                                timeFormat = SettingsViewModel.Locale.TimeFormat.TWELVE_HOURS
-                                localeSetting.timeFormat = timeFormat
-                                onUpdate(
-                                    localeSetting.copy(timeFormat = timeFormat)
-                                )
-                            }
-                        )
-                        AppTextLarge(
-                            text = stringResource(
-                                id = R.string._12h
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        RadioButton(
-                            selected = timeFormat == SettingsViewModel.Locale.TimeFormat.TWENTY_FOUR_HOURS,
-                            onClick = {
-                                timeFormat = SettingsViewModel.Locale.TimeFormat.TWENTY_FOUR_HOURS
-                                localeSetting.timeFormat = timeFormat
-                                onUpdate(localeSetting.copy(timeFormat = timeFormat))
-                            }
-                        )
-                        AppTextLarge(
-                            text = stringResource(
-                                id = R.string._24h
-                            )
-                        )
-                    }
+                    val timeOptions = listOf(
+                        SettingsViewModel.Locale.TimeFormat.TWELVE_HOURS to stringResource(id = R.string._12h),
+                        SettingsViewModel.Locale.TimeFormat.TWENTY_FOUR_HOURS to stringResource(id = R.string._24h)
+                    )
+                    val selectedTimeIndex = if (timeFormat == SettingsViewModel.Locale.TimeFormat.TWELVE_HOURS) 0 else 1
+
+                    org.avmedia.gshockGoogleSync.ui.common.SegmentedPillControl(
+                        items = timeOptions,
+                        selectedIndex = selectedTimeIndex,
+                        onSelected = { idx ->
+                            val selected = timeOptions[idx].first
+                            timeFormat = selected
+                            onUpdate(localeSetting.copy(timeFormat = selected))
+                        },
+                        itemLabel = { it.second },
+                        modifier = Modifier.width(160.dp)
+                    )
                 }
             }
 
             WatchFeature(id = "locale.date_format") {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
                 ) {
                     AppTextLarge(
                         text = stringResource(
@@ -125,39 +113,23 @@ fun Locale(
                             .padding(end = 6.dp)
                     )
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically // Aligns children vertically in the center
-                    ) {
-                        RadioButton(
-                            selected = dateFormat == SettingsViewModel.Locale.DateFormat.MONTH_DAY,
-                            onClick = {
-                                dateFormat = SettingsViewModel.Locale.DateFormat.MONTH_DAY
-                                localeSetting.dateFormat = dateFormat
-                                onUpdate(localeSetting.copy(dateFormat = dateFormat))
-                            }
-                        )
-                        AppTextLarge(
-                            text = stringResource(
-                                id = R.string.mm_dd
-                            )
-                        )
+                    val dateOptions = listOf(
+                        SettingsViewModel.Locale.DateFormat.MONTH_DAY to stringResource(id = R.string.mm_dd),
+                        SettingsViewModel.Locale.DateFormat.DAY_MONTH to stringResource(id = R.string.dd_mm)
+                    )
+                    val selectedDateIndex = if (dateFormat == SettingsViewModel.Locale.DateFormat.MONTH_DAY) 0 else 1
 
-                        Spacer(modifier = Modifier.width(10.dp))
-
-                        RadioButton(
-                            selected = dateFormat == SettingsViewModel.Locale.DateFormat.DAY_MONTH,
-                            onClick = {
-                                dateFormat = SettingsViewModel.Locale.DateFormat.DAY_MONTH
-                                localeSetting.dateFormat = dateFormat
-                                onUpdate(localeSetting.copy(dateFormat = dateFormat))
-                            }
-                        )
-                        AppTextLarge(
-                            text = stringResource(
-                                id = R.string.dd_mm
-                            )
-                        )
-                    }
+                    org.avmedia.gshockGoogleSync.ui.common.SegmentedPillControl(
+                        items = dateOptions,
+                        selectedIndex = selectedDateIndex,
+                        onSelected = { idx ->
+                            val selected = dateOptions[idx].first
+                            dateFormat = selected
+                            onUpdate(localeSetting.copy(dateFormat = selected))
+                        },
+                        itemLabel = { it.second },
+                        modifier = Modifier.width(160.dp)
+                    )
                 }
             }
 

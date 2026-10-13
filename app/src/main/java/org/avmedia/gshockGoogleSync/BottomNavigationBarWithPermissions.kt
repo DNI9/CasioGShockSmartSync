@@ -120,6 +120,16 @@ fun BottomNavigationBarWithPermissions(
 
     val navItems = BottomNavigationItem().bottomNavigationItems()
 
+    val navSuiteItemColors = androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults.itemColors(
+        navigationBarItemColors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+            selectedIconColor = org.avmedia.gshockGoogleSync.theme.OnWarmAmber,
+            selectedTextColor = org.avmedia.gshockGoogleSync.theme.WarmAmber,
+            indicatorColor = org.avmedia.gshockGoogleSync.theme.WarmAmber,
+            unselectedIconColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+            unselectedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    )
+
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             navItems.forEach { navigationItem ->
@@ -137,13 +147,14 @@ fun BottomNavigationBarWithPermissions(
                     icon = {
                         Icon(
                             navigationItem.icon,
-                            contentDescription = navigationItem.label
+                            contentDescription = null
                         )
                     },
                     label = {
                         Text(navigationItem.label)
                     },
-                    alwaysShowLabel = false
+                    alwaysShowLabel = false,
+                    colors = navSuiteItemColors
                 )
             }
         },

@@ -191,7 +191,8 @@ fun ReminderEditDialog(
             }
         },
         confirmButton = {
-            Button(onClick = {
+            org.avmedia.gshockGoogleSync.ui.common.AppButton(
+                onClick = {
                 val finalStartDate = EventDate(startDate.year, startDate.month, startDate.dayOfMonth)
                 val finalEndDate = if (repeatPeriod == RepeatPeriod.NEVER || !hasEndDate) {
                     finalStartDate
@@ -209,14 +210,17 @@ fun ReminderEditDialog(
                     event.incompatible
                 )
                 onSave(updatedEvent)
-            }) {
-                Text("Save")
-            }
+            },
+                text = "Save",
+                variant = org.avmedia.gshockGoogleSync.ui.common.AppButtonVariant.Primary
+            )
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
+            org.avmedia.gshockGoogleSync.ui.common.AppButton(
+                onClick = onDismiss,
+                text = "Cancel",
+                variant = org.avmedia.gshockGoogleSync.ui.common.AppButtonVariant.Tonal
+            )
         }
     )
 }

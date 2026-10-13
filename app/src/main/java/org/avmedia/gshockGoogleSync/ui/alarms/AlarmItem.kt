@@ -58,15 +58,28 @@ fun AlarmItem(
         ).getApplicationContext()
     }
 
+    val formattedTime = formatTime(hours, minutes, appContext)
+    val alarmLabel = if (name.isNullOrBlank()) stringResource(id = R.string.daily) else name
+    val statusText = if (isAlarmEnabled) "Enabled" else "Disabled"
+
     AppCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(0.dp),
+            .padding(0.dp)
+            .androidx.compose.ui.semantics.semantics(mergeDescendants = true) {
+                this.contentDescription = "Alarm: $formattedTime, $alarmLabel. Status: $statusText"
+                this.customActions = listOf(
+                    androidx.compose.ui.semantics.CustomAccessibilityAction(label = "Edit alarm time") {
+                        showTimePickerDialog = true
+                        true
+                    }
+                )
+            },
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(horizontal = 14.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -76,17 +89,21 @@ fun AlarmItem(
                     .padding(end = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AppTextExtraLarge(
-                    text = formatTime(hours, minutes, appContext),
+                androidx.compose.material3.Text(
+                    text = formattedTime,
+                    style = org.avmedia.gshockGoogleSync.theme.LocalChronoLcdTypography.current.lcdTimerReadout,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .padding(4.dp)
                         .clickable { showTimePickerDialog = true },
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                val alarmName = if (name.isNullOrBlank()) stringResource(id = R.string.daily) else name
-                AppText(text = alarmName)
+                Spacer(modifier = Modifier.width(12.dp))
+                AppText(
+                    text = alarmLabel,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             AppSwitch(
                 checked = isAlarmEnabled,
@@ -99,20 +116,24 @@ fun AlarmItem(
 
     if (showTimePickerDialog) {
         Dialog(onDismissRequest = { showTimePickerDialog = false }) {
-            Box(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(16.dp)
+            AppCard(
+                shape = MaterialTheme.shapes.extraLarge,
+                tonalLevel = org.avmedia.gshockGoogleSync.ui.common.CardTonalLevel.Highest
             ) {
-                AppTimePicker(
-                    onConfirm = { state ->
-                        onTimeChanged(state.hour, state.minute)
-                        showTimePickerDialog = false
-                    },
-                    onDismiss = { showTimePickerDialog = false },
-                    initialHour = hours,
-                    initialMinute = minutes,
-                )
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    AppTimePicker(
+                        onConfirm = { state ->
+                            onTimeChanged(state.hour, state.minute)
+                            showTimePickerDialog = false
+                        },
+                        onDismiss = { showTimePickerDialog = false },
+                        initialHour = hours,
+                        initialMinute = minutes,
+                    )
+                }
             }
         }
     }

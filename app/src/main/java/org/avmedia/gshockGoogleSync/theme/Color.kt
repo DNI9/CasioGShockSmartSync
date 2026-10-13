@@ -1,77 +1,128 @@
 package org.avmedia.gshockGoogleSync.theme
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
-// G-Shock Expressive Palette
+// --- Core Tonal Chrono Expressive Accents ---
+val MintEmerald = Color(0xFF69DB9B)          // High-luminance functional primary
+val OnMintEmerald = Color(0xFF00391F)        // WCAG AAA dark contrast text/icon (7.62:1)
+val MintEmeraldContainer = Color(0xFF005E38)
+val OnMintEmeraldContainer = Color(0xFF86F8B5)
 
-// Primary - Electric Violet / Blue
-val PrimaryLight = Color(0xFF6200EE)
+val Periwinkle = Color(0xFFA7C8FF)           // Secondary accent & telemetry arcs
+val OnPeriwinkle = Color(0xFF04305F)        // WCAG AAA dark contrast (9.46:1)
+val PeriwinkleContainer = Color(0xFF274A79)
+val OnPeriwinkleContainer = Color(0xFF99BAF0)
+
+val WarmAmber = Color(0xFFFFB77C)            // Tertiary accent, alarms & active nav pills
+val OnWarmAmber = Color(0xFF4D2600)          // WCAG AAA dark contrast (8.23:1)
+val WarmAmberContainer = Color(0xFF784514)
+val OnWarmAmberContainer = Color(0xFFFFDAC0)
+
+// --- Tonal Surface Architecture (Dark Theme Foundation) ---
+val ChronoSurface = Color(0xFF121416)
+val ChronoSurfaceDim = Color(0xFF0F1012)
+val ChronoSurfaceBright = Color(0xFF37393B)
+
+val ChronoSurfaceContainerLowest = Color(0xFF0C0E10)
+val ChronoSurfaceContainerLow = Color(0xFF1A1C1E)    // Recessed selector tracks
+val ChronoSurfaceContainer = Color(0xFF202327)       // Default container card fill
+val ChronoSurfaceContainerHigh = Color(0xFF282A2C)   // Secondary buttons, elevated nav bar
+val ChronoSurfaceContainerHighest = Color(0xFF333537)
+
+val ChronoOnSurface = Color(0xFFE2E2E5)
+val ChronoOnSurfaceVariant = Color(0xFFBDCABE)
+val ChronoOutline = Color(0xFF879489)
+val ChronoOutlineVariant = Color(0xFF3E4A41)         // Subtle 1dp container boundary
+
+val ChronoError = Color(0xFFFFB4AB)
+val ChronoOnError = Color(0xFF690005)
+val ChronoErrorContainer = Color(0xFF93000A)
+val ChronoOnErrorContainer = Color(0xFFFFDAD6)
+
+// --- Light Theme Colors ---
+val PrimaryLight = Color(0xFF006D41)
 val OnPrimaryLight = Color(0xFFFFFFFF)
-val PrimaryContainerLight = Color(0xFFEADDFF)
-val OnPrimaryContainerLight = Color(0xFF21005D)
+val PrimaryContainerLight = Color(0xFF86F8B5)
+val OnPrimaryContainerLight = Color(0xFF002110)
 
-// Secondary - Teal / Cyan (Vibrant accent)
-val SecondaryLight = Color(0xFF03DAC6)
-val OnSecondaryLight = Color(0xFF000000)
-val SecondaryContainerLight = Color(0xFFCEF9F3)
-val OnSecondaryContainerLight = Color(0xFF001F1C)
+val SecondaryLight = Color(0xFF3B5E91)
+val OnSecondaryLight = Color(0xFFFFFFFF)
+val SecondaryContainerLight = Color(0xFFD5E3FF)
+val OnSecondaryContainerLight = Color(0xFF001B3B)
 
-// Tertiary - Pink / Magenta (Playful accent)
-val TertiaryLight = Color(0xFFEF0078)
+val TertiaryLight = Color(0xFF8E4E16)
 val OnTertiaryLight = Color(0xFFFFFFFF)
-val TertiaryContainerLight = Color(0xFFFFD8E4)
-val OnTertiaryContainerLight = Color(0xFF31111D)
+val TertiaryContainerLight = Color(0xFFFFDCC3)
+val OnTertiaryContainerLight = Color(0xFF2F1500)
 
-// Error
-val ErrorLight = Color(0xFFB00020)
-val OnErrorLight = Color(0xFFFFFFFF)
-val ErrorContainerLight = Color(0xFFF9DEDC)
-val OnErrorContainerLight = Color(0xFF410E0B)
+val BackgroundLight = Color(0xFFF9F9FC)
+val OnBackgroundLight = Color(0xFF191C1D)
+val SurfaceLight = Color(0xFFF9F9FC)
+val OnSurfaceLight = Color(0xFF191C1D)
+val SurfaceVariantLight = Color(0xFFDCE5DC)
+val OnSurfaceVariantLight = Color(0xFF404942)
+val OutlineLight = Color(0xFF717972)
 
-// Neutral / Background
-val BackgroundLight = Color(0xFFFDFBFF)
-val OnBackgroundLight = Color(0xFF1B1B1F)
-val SurfaceLight = Color(0xFFFDFBFF)
-val OnSurfaceLight = Color(0xFF1B1B1F)
-val SurfaceVariantLight = Color(0xFFE7E0EC)
-val OnSurfaceVariantLight = Color(0xFF49454F)
-val OutlineLight = Color(0xFF79747E)
 val SurfaceContainerLowestLight = Color(0xFFFFFFFF)
-val SurfaceContainerLowLight = Color(0xFFF7F2FA)
-val SurfaceContainerLight = Color(0xFFF3EDF7)
-val SurfaceContainerHighLight = Color(0xFFECE6F0)
-val SurfaceContainerHighestLight = Color(0xFFE6E0E9)
+val SurfaceContainerLowLight = Color(0xFFF3F3F6)
+val SurfaceContainerLight = Color(0xFFEDEEF1)
+val SurfaceContainerHighLight = Color(0xFFE8E8EB)
+val SurfaceContainerHighestLight = Color(0xFFE2E2E5)
 
-// Dark Theme Colors
-val PrimaryDark = Color(0xFFD0BCFF)
-val OnPrimaryDark = Color(0xFF381E72)
-val PrimaryContainerDark = Color(0xFF4F378B)
-val OnPrimaryContainerDark = Color(0xFFEADDFF)
+val ErrorLight = Color(0xFFBA1A1A)
+val OnErrorLight = Color(0xFFFFFFFF)
+val ErrorContainerLight = Color(0xFFFFDAD6)
+val OnErrorContainerLight = Color(0xFF410002)
 
-val SecondaryDark = Color(0xFF66FFF9)
-val OnSecondaryDark = Color(0xFF003734)
-val SecondaryContainerDark = Color(0xFF00504D)
-val OnSecondaryContainerDark = Color(0xFFCEF9F3)
+// Backward-compatibility aliases for legacy references
+val PrimaryDark = MintEmerald
+val OnPrimaryDark = OnMintEmerald
+val PrimaryContainerDark = MintEmeraldContainer
+val OnPrimaryContainerDark = OnMintEmeraldContainer
 
-val TertiaryDark = Color(0xFFFFB0C9)
-val OnTertiaryDark = Color(0xFF650031)
-val TertiaryContainerDark = Color(0xFF8E0045)
-val OnTertiaryContainerDark = Color(0xFFFFD8E4)
+val SecondaryDark = Periwinkle
+val OnSecondaryDark = OnPeriwinkle
+val SecondaryContainerDark = PeriwinkleContainer
+val OnSecondaryContainerDark = OnPeriwinkleContainer
 
-val ErrorDark = Color(0xFFF2B8B5)
-val OnErrorDark = Color(0xFF601410)
-val ErrorContainerDark = Color(0xFF8C1D18)
-val OnErrorContainerDark = Color(0xFFF9DEDC)
+val TertiaryDark = WarmAmber
+val OnTertiaryDark = OnWarmAmber
+val TertiaryContainerDark = WarmAmberContainer
+val OnTertiaryContainerDark = OnWarmAmberContainer
 
-val BackgroundDark = Color(0xFF1B1B1F)
-val OnBackgroundDark = Color(0xFFE4E1E6)
-val SurfaceDark = Color(0xFF1B1B1F)
-val OnSurfaceDark = Color(0xFFE4E1E6)
-val SurfaceVariantDark = Color(0xFF49454F)
-val OnSurfaceVariantDark = Color(0xFFCAC4D0)
-val OutlineDark = Color(0xFF938F99)
-val SurfaceContainerLowestDark = Color(0xFF0F0D13)
-val SurfaceContainerLowDark = Color(0xFF1D1B20)
-val SurfaceContainerDark = Color(0xFF211F26)
-val SurfaceContainerHighDark = Color(0xFF2B2930)
-val SurfaceContainerHighestDark = Color(0xFF36343B)
+val BackgroundDark = ChronoSurface
+val OnBackgroundDark = ChronoOnSurface
+val SurfaceDark = ChronoSurface
+val OnSurfaceDark = ChronoOnSurface
+val SurfaceVariantDark = ChronoSurfaceContainerHighest
+val OnSurfaceVariantDark = ChronoOnSurfaceVariant
+val OutlineDark = ChronoOutline
+
+val SurfaceContainerLowestDark = ChronoSurfaceContainerLowest
+val SurfaceContainerLowDark = ChronoSurfaceContainerLow
+val SurfaceContainerDark = ChronoSurfaceContainer
+val SurfaceContainerHighDark = ChronoSurfaceContainerHigh
+val SurfaceContainerHighestDark = ChronoSurfaceContainerHighest
+
+val ErrorDark = ChronoError
+val OnErrorDark = ChronoOnError
+val ErrorContainerDark = ChronoErrorContainer
+val OnErrorContainerDark = ChronoOnErrorContainer
+
+// --- Extended Horological Tokens ---
+@Immutable
+data class ChronoCustomColors(
+    val lcdBackground: Color = Color(0xFF141A16),
+    val lcdTextPrimary: Color = MintEmerald,
+    val lcdTextSecondary: Color = Color(0xFF3B5E4A),
+    val gaugeGradient: Brush = Brush.sweepGradient(listOf(MintEmerald, Periwinkle, MintEmerald)),
+    val activeGlow: Color = Color(0x4069DB9B),
+    val connectionPillActive: Color = MintEmerald,
+    val connectionPillDisconnected: Color = Color(0xFFE57373),
+    val cardBorder: Color = ChronoOutlineVariant.copy(alpha = 0.35f)
+)
+
+val LocalChronoColors = staticCompositionLocalOf { ChronoCustomColors() }

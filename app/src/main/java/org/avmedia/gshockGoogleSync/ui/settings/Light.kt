@@ -83,7 +83,9 @@ fun Light(
 
             WatchFeature(id = "light.duration") {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -92,32 +94,28 @@ fun Light(
                             stringResource(id = R.string.illumination_period),
                             20
                         ),
+                        modifier = Modifier.weight(1f)
                     )
 
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RadioButton(
-                            selected = lightDuration == SettingsViewModel.Light.LightDuration.TWO_SECONDS,
-                            onClick = {
-                                lightDuration = SettingsViewModel.Light.LightDuration.TWO_SECONDS
-                                onUpdate(lightSetting.copy(duration = lightDuration))
-                            },
-                            modifier = Modifier.padding(end = 0.dp)
-                        )
-                        AppText(text = watchFeatureManager.getString("light.short_duration") as String)
+                    val shortText = (watchFeatureManager.getString("light.short_duration") ?: "2s") as String
+                    val longText = (watchFeatureManager.getString("light.long_duration") ?: "4s") as String
+                    val durationOptions = listOf(
+                        SettingsViewModel.Light.LightDuration.TWO_SECONDS to shortText,
+                        SettingsViewModel.Light.LightDuration.FOUR_SECONDS to longText
+                    )
+                    val selectedIdx = if (lightDuration == SettingsViewModel.Light.LightDuration.TWO_SECONDS) 0 else 1
 
-                        RadioButton(
-                            selected = lightDuration == SettingsViewModel.Light.LightDuration.FOUR_SECONDS,
-                            onClick = {
-                                lightDuration = SettingsViewModel.Light.LightDuration.FOUR_SECONDS
-                                onUpdate(lightSetting.copy(duration = lightDuration))
-                            },
-                            modifier = Modifier.padding(end = 0.dp)
-                        )
-                        AppText(text = watchFeatureManager.getString("light.long_duration") as String)
-                    }
+                    org.avmedia.gshockGoogleSync.ui.common.SegmentedPillControl(
+                        items = durationOptions,
+                        selectedIndex = selectedIdx,
+                        onSelected = { idx ->
+                            val selected = durationOptions[idx].first
+                            lightDuration = selected
+                            onUpdate(lightSetting.copy(duration = selected))
+                        },
+                        itemLabel = { it.second },
+                        modifier = Modifier.width(160.dp)
+                    )
                 }
             }
         }

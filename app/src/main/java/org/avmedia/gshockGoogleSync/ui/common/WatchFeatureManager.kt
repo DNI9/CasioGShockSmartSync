@@ -8,9 +8,12 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
+import org.avmedia.gshockGoogleSync.domain.model.WatchCapability
+
 interface IWatchFeatureManager {
     fun isFeatureSupported(featureId: String): Boolean
     fun isCardSupported(cardId: String): Boolean
+    fun isCapabilitySupported(capability: WatchCapability): Boolean
     fun getString(featureId: String): String?
     fun getWatchName(): String
     fun getAlarmCount(): Int
@@ -103,6 +106,25 @@ class WatchFeatureManager @Inject constructor() : IWatchFeatureManager {
         val supported = features.any { isFeatureSupported(it) }
         Timber.d("isCardSupported: id=$cardId, supported=$supported")
         return supported
+    }
+
+    override fun isCapabilitySupported(capability: WatchCapability): Boolean {
+        refreshCounter.intValue
+        return when (capability) {
+            WatchCapability.StepCounter -> isFeatureSupported("time.step_counter")
+            WatchCapability.Reminders -> isFeatureSupported("actions.reminders")
+            WatchCapability.WorldCities -> isFeatureSupported("time.world_cities")
+            WatchCapability.SolarBattery -> isFeatureSupported("time.battery")
+            WatchCapability.Temperature -> isFeatureSupported("time.temperature")
+            WatchCapability.AutoLight -> isFeatureSupported("light.auto_light")
+            WatchCapability.PowerSaving -> isFeatureSupported("settings.power_saving")
+            WatchCapability.AlwaysConnectedBle -> isFeatureSupported("time_adjustment.always_connected")
+            WatchCapability.MultipleFonts -> isFeatureSupported("settings.multiple_fonts")
+            WatchCapability.OperationSound -> isFeatureSupported("operation_tone.sound")
+            WatchCapability.OperationVibration -> isFeatureSupported("operation_tone.vibrate")
+            WatchCapability.HourlyChime -> isFeatureSupported("alarms.chime")
+            WatchCapability.FindPhone -> isFeatureSupported("actions.find_phone")
+        }
     }
 
     override fun getString(featureId: String): String? {

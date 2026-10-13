@@ -125,8 +125,10 @@ fun TimerView(
 
 @Composable
 fun TimerTimeView(modifier: Modifier = Modifier, timeText: String) {
-    AppTextExtraLarge(
+    androidx.compose.material3.Text(
         text = timeText,
+        style = org.avmedia.gshockGoogleSync.theme.LocalChronoLcdTypography.current.lcdTimerReadout,
+        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
         modifier = modifier,
     )
 }

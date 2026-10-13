@@ -130,7 +130,7 @@ fun StepCounterView(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(140.dp),
+                            .androidx.compose.foundation.layout.heightIn(min = 140.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(
@@ -173,7 +173,7 @@ fun StepCounterView(
                                 text = "$displayWeight",
                                 modifier = Modifier
                                     .clickable { showWeightDialog = true }
-                                    .padding(vertical = 4.dp)
+                                    .padding(vertical = 8.dp, horizontal = 4.dp)
                             )
 
                             if (showWeightDialog) {
@@ -243,8 +243,27 @@ private fun StepsProgressRing(
     val primaryColor = MaterialTheme.colorScheme.primary
     val trackColor = MaterialTheme.colorScheme.surfaceVariant
     val progress = (currentSteps / goal.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
+    val gradientBrush = androidx.compose.ui.graphics.Brush.linearGradient(
+        colors = listOf(
+            org.avmedia.gshockGoogleSync.theme.MintEmerald,
+            org.avmedia.gshockGoogleSync.theme.Periwinkle
+        )
+    )
+    val percentInt = (progress * 100).toInt()
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+    Box(
+        modifier = modifier.androidx.compose.ui.semantics.semantics(mergeDescendants = true) {
+            this.progressBarRangeInfo = androidx.compose.ui.semantics.ProgressBarRangeInfo(
+                current = currentSteps.toFloat(),
+                range = 0f..goal.coerceAtLeast(1).toFloat()
+            )
+            this.stateDescription = "$currentSteps of $goal steps, $percentInt% completed"
+            this.contentDescription = "Daily Step Progress: $currentSteps steps of $goal. " +
+                "Distance: ${String.format(Locale.US, "%.1f", distanceKm)} km. " +
+                "Calories: ${String.format(Locale.US, "%.0f", calories)} kcal."
+        },
+        contentAlignment = Alignment.Center
+    ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val strokeWidth = 8.dp.toPx()
             val diameter = size.minDimension
@@ -262,7 +281,7 @@ private fun StepsProgressRing(
                 style = stroke
             )
             drawArc(
-                color = primaryColor,
+                brush = gradientBrush,
                 startAngle = -180f,
                 sweepAngle = 180f * progress,
                 useCenter = false,

@@ -4,13 +4,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import AppTextLarge
 import AppSwitch
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -75,33 +73,25 @@ fun PhotoView(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Column(horizontalAlignment = Alignment.End) {
-                    CameraOrientationOption(
-                        text = stringResource(id = R.string.front_cam),
-                        isSelected = viewState.cameraOrientation == ActionContainer.CameraOrientation.FRONT,
-                        onSelect = {
-                            val newState = viewState.copy(
-                                cameraOrientation = ActionContainer.CameraOrientation.FRONT
-                            )
-                            viewState = newState
-                            viewState.action.cameraOrientation = newState.cameraOrientation
-                            onUpdate(viewState.action)
-                        }
-                    )
+                val cameraOptions = listOf(
+                    ActionContainer.CameraOrientation.FRONT to stringResource(id = R.string.front_cam),
+                    ActionContainer.CameraOrientation.BACK to stringResource(id = R.string.back_cam)
+                )
+                val selectedIndex = if (viewState.cameraOrientation == ActionContainer.CameraOrientation.FRONT) 0 else 1
 
-                    CameraOrientationOption(
-                        text = stringResource(id = R.string.back_cam),
-                        isSelected = viewState.cameraOrientation == ActionContainer.CameraOrientation.BACK,
-                        onSelect = {
-                            val newState = viewState.copy(
-                                cameraOrientation = ActionContainer.CameraOrientation.BACK
-                            )
-                            viewState = newState
-                            viewState.action.cameraOrientation = newState.cameraOrientation
-                            onUpdate(viewState.action)
-                        }
-                    )
-                }
+                org.avmedia.gshockGoogleSync.ui.common.SegmentedPillControl(
+                    items = cameraOptions,
+                    selectedIndex = selectedIndex,
+                    onSelected = { idx ->
+                        val newOrientation = cameraOptions[idx].first
+                        val newState = viewState.copy(cameraOrientation = newOrientation)
+                        viewState = newState
+                        viewState.action.cameraOrientation = newOrientation
+                        onUpdate(viewState.action)
+                    },
+                    itemLabel = { it.second },
+                    modifier = Modifier.width(140.dp)
+                )
             }
 
             AppSwitch(
@@ -115,21 +105,5 @@ fun PhotoView(
                 modifier = Modifier.padding(8.dp)
             )
         }
-    }
-}
-
-@Composable
-private fun CameraOrientationOption(
-    text: String,
-    isSelected: Boolean,
-    onSelect: () -> Unit
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        RadioButton(
-            selected = isSelected,
-            onClick = onSelect,
-            modifier = Modifier
-        )
-        Text(text = text)
     }
 }
