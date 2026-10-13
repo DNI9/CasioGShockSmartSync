@@ -50,7 +50,15 @@ jobs:
       - name: Rename APK for release
         run: cp app/build/outputs/apk/github/release/app-github-release.apk app/build/outputs/apk/github/release/app-release.apk
 
+      - name: Upload Release APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CasioGShockSmartSync-release
+          path: app/build/outputs/apk/github/release/app-release.apk
+          retention-days: 14
+
       - name: Create Release and Upload APK
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: app/build/outputs/apk/github/release/app-release.apk
