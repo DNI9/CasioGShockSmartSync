@@ -40,9 +40,11 @@ class RootViewModelTest {
     }
 
     @Test
-    fun `checkPairedDevices delegates to DeviceAssociationManager`() = kotlinx.coroutines.runBlocking {
-        rootViewModel.checkPairedDevices()
-        verify(mockDeviceAssociationManager).checkPairedDevicesOrNotify()
+    fun `checkPairedDevices delegates to DeviceAssociationManager`() {
+        kotlinx.coroutines.runBlocking {
+            rootViewModel.checkPairedDevices()
+            verify(mockDeviceAssociationManager).checkPairedDevicesOrNotify()
+        }
     }
 
     @Test
