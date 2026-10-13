@@ -28,7 +28,7 @@ class RootViewModel @Inject constructor(
         screenStateManager.goToNavigationScreen()
     }
 
-    fun checkPairedDevices() {
+    suspend fun checkPairedDevices() {
         deviceAssociationManager.checkPairedDevicesOrNotify()
     }
 

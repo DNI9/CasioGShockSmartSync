@@ -118,9 +118,11 @@ fun BottomNavigationBarWithPermissions(
         }
     }
 
+    val navItems = BottomNavigationItem().bottomNavigationItems()
+
     NavigationSuiteScaffold(
         navigationSuiteItems = {
-            BottomNavigationItem().bottomNavigationItems().forEach { navigationItem ->
+            navItems.forEach { navigationItem ->
                 item(
                     selected = currentDestination?.hierarchy?.any { it.route == navigationItem.route } == true,
                     onClick = {

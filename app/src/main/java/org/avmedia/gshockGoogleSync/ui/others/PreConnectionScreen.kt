@@ -437,7 +437,7 @@ fun RemoveButton(onClick: () -> Unit) {
         ) {
             Icon(
                 Icons.Default.Remove,
-                contentDescription = stringResource(R.string.delete),
+                contentDescription = "Remove device",
                 modifier = Modifier.size(16.dp),
                 tint = MaterialTheme.colorScheme.onErrorContainer
             )

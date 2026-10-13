@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 fun AppSwitchWithText(
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     text: String
 ) {
     Row(

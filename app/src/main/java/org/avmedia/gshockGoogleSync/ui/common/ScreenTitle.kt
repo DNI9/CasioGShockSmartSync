@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ScreenTitle(
     text: String,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     val defaultModifier = Modifier
         .fillMaxWidth()
