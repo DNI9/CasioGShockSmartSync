@@ -43,8 +43,8 @@ class ComponentTokensTest {
         // Compute relative luminance
         fun relativeLuminance(r: Float, g: Float, b: Float): Double {
             fun adjust(c: Float): Double =
-                if (c <= 0.03928f) (c / 12.92).toDouble()
-                else Math.pow(((c + 0.055) / 1.055).toDouble(), 2.4)
+                if (c <= 0.03928f) (c / 12.92)
+                else Math.pow(((c + 0.055) / 1.055), 2.4)
             return 0.2126 * adjust(r) + 0.7152 * adjust(g) + 0.0722 * adjust(b)
         }
 

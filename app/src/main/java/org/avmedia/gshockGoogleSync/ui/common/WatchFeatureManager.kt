@@ -25,14 +25,18 @@ class WatchFeatureManager @Inject constructor() : IWatchFeatureManager {
     private val refreshCounter = mutableIntStateOf(0)
 
     init {
-        ProgressEvents.runEventActions("WatchFeatureManager", arrayOf(
-            EventAction("DeviceName") {
-                refreshCounter.intValue++
-            },
-            EventAction("ConnectionSetupComplete") {
-                refreshCounter.intValue++
-            }
-        ))
+        try {
+            ProgressEvents.runEventActions("WatchFeatureManager", arrayOf(
+                EventAction("DeviceName") {
+                    refreshCounter.intValue++
+                },
+                EventAction("ConnectionSetupComplete") {
+                    refreshCounter.intValue++
+                }
+            ))
+        } catch (e: Exception) {
+            Timber.w(e, "Could not register ProgressEvents in current environment")
+        }
     }
 
     // To support a new WatchInfo feature: add one line here.
