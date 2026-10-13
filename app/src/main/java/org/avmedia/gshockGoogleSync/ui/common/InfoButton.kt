@@ -2,6 +2,7 @@ package org.avmedia.gshockGoogleSync.ui.common
 
 import android.text.Html
 import androidx.compose.foundation.clickable
+import androidx.compose.material3.TextButton
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
@@ -26,7 +27,7 @@ import org.avmedia.gshockGoogleSync.R
 fun InfoButton(
     infoText: String,
     modifier: Modifier = Modifier,
-    iconSize: Dp = 32.dp,
+    iconSize: Dp = 24.dp,
     iconTint: Color = MaterialTheme.colorScheme.primary,
     dialogTitle: String = stringResource(id = R.string.info),
     confirmButtonText: String = stringResource(id = R.string.ok),
@@ -35,32 +36,29 @@ fun InfoButton(
     var showDialog by remember { mutableStateOf(false) }
 
     IconButton(
-        onClick = { showDialog = !showDialog },
-        modifier = modifier.size(iconSize)
+        onClick = { showDialog = true },
+        modifier = modifier
     ) {
         Icon(
             imageVector = Icons.Outlined.Info,
-            contentDescription = "Info Icon",
+            contentDescription = stringResource(id = R.string.info),
             tint = iconTint,
-            modifier = Modifier
-                .size(iconSize)
-                .clickable { showDialog = true }
+            modifier = Modifier.size(iconSize)
         )
+    }
 
-        if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                confirmButton = {
-                    Text(
-                        text = confirmButtonText,
-                        modifier = Modifier.clickable { showDialog = false }
-                    )
-                },
-                title = { Text(text = dialogTitle) },
-                text = {
-                    Text(text = Html.fromHtml(infoText, htmlMode).toString())
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(text = confirmButtonText)
                 }
-            )
-        }
+            },
+            title = { Text(text = dialogTitle) },
+            text = {
+                Text(text = Html.fromHtml(infoText, htmlMode).toString())
+            }
+        )
     }
 }

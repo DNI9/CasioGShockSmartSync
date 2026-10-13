@@ -43,11 +43,16 @@ fun WatchNameView(
     AppCard(
         modifier = modifier
     ) {
-        Box(modifier = Modifier.fillMaxHeight()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp, horizontal = 12.dp)
+        ) {
             WatchName(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 text = state.watchName
             )
 
@@ -55,10 +60,10 @@ fun WatchNameView(
                 AppCard(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(8.dp)
+                        .padding(4.dp)
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         InfoButton(
@@ -71,11 +76,13 @@ fun WatchNameView(
                             text = "Verbose",
                             style = MaterialTheme.typography.labelSmall
                         )
+                        Spacer(modifier = Modifier.width(4.dp))
                         Switch(
                             checked = state.isVoiceVerbose,
                             onCheckedChange = { timeModel.onAction(TimeAction.SetVoiceVerbose(it)) },
-                            modifier = Modifier.scale(0.5f)
+                            modifier = Modifier.scale(0.75f)
                         )
+                        Spacer(modifier = Modifier.width(4.dp))
                         VoiceCommandTrigger(
                             isListening = state.isListening,
                             onClick = { timeModel.onAction(TimeAction.StartVoiceCommand) }
@@ -111,7 +118,7 @@ fun VoiceCommandTrigger(
 ) {
     Box(
         modifier = modifier
-            .size(40.dp)
+            .size(48.dp)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {

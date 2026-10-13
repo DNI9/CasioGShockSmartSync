@@ -1,8 +1,12 @@
 package org.avmedia.gshockGoogleSync.ui.time
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -11,9 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import org.avmedia.gshockGoogleSync.R
 import org.avmedia.gshockGoogleSync.theme.GShockSmartSyncTheme
 import org.avmedia.gshockGoogleSync.ui.common.AppSnackbar
@@ -33,83 +35,51 @@ fun TimeScreen(timeViewModel: TimeViewModel = hiltViewModel()) {
         }
     }
 
+    val watchFeatureManager = LocalWatchFeatureManager.current
+    val isStepCounterSupported = watchFeatureManager.isCardSupported("step_counter_card")
+
     GShockSmartSyncTheme {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            ConstraintLayout {
-                val (title, localTime, timer, watchName, watchInfo) = createRefs()
-
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 ScreenTitle(
-                    stringResource(id = R.string.time),
-                    Modifier.constrainAs(title) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
+                    text = stringResource(id = R.string.time)
                 )
 
-                LocalTimeView(
-                    Modifier
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
                         .fillMaxWidth()
-                        .padding(vertical = 0.dp) // Adjust padding as needed
-                        .constrainAs(localTime) {
-                            top.linkTo(title.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                )
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    LocalTimeView(
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-                val watchFeatureManager = LocalWatchFeatureManager.current
-                val isStepCounterSupported =
-                    watchFeatureManager.isCardSupported("step_counter_card")
+                    TimerView(
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-                TimerView(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .constrainAs(timer) {
-                                top.linkTo(localTime.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                )
+                    if (isStepCounterSupported) {
+                        StepCounterView(
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
 
-                val stepCounter = createRef()
-                if (isStepCounterSupported) {
-                    StepCounterView(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .constrainAs(stepCounter) {
-                                top.linkTo(timer.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
+                    WatchNameView(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    WatchInfoView(
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
-
-                WatchNameView(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .constrainAs(watchName) {
-                                top.linkTo(if (isStepCounterSupported) stepCounter.bottom else timer.bottom)
-                                bottom.linkTo(watchInfo.top)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                height = Dimension.fillToConstraints
-                            }
-                )
-
-                WatchInfoView(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .constrainAs(watchInfo) {
-                                bottom.linkTo(parent.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                )
-
             }
         }
     }

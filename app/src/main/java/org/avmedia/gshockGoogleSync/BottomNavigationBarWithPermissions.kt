@@ -11,10 +11,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -26,8 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -115,46 +112,47 @@ fun BottomNavigationBarWithPermissions(
         }
     }
 
-    Scaffold(
+    val navigateToHome: () -> Unit = {
+        navController.navigate(Screens.Time.route) {
+            popUpTo(Screens.Time.route) { inclusive = true }
+        }
+    }
+
+    NavigationSuiteScaffold(
+        navigationSuiteItems = {
+            BottomNavigationItem().bottomNavigationItems().forEach { navigationItem ->
+                item(
+                    selected = currentDestination?.hierarchy?.any { it.route == navigationItem.route } == true,
+                    onClick = {
+                        navController.navigate(navigationItem.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    icon = {
+                        Icon(
+                            navigationItem.icon,
+                            contentDescription = navigationItem.label
+                        )
+                    },
+                    label = {
+                        Text(navigationItem.label)
+                    },
+                    alwaysShowLabel = false
+                )
+            }
+        },
         modifier = Modifier
             .fillMaxSize()
-            .detectInactivity(inactivityHandler),
-        bottomBar = {
-            NavigationBar(
-                modifier = Modifier.padding(0.dp)
-            ) {
-                BottomNavigationItem().bottomNavigationItems()
-                    .forEachIndexed { _, navigationItem ->
-                        NavigationBarItem(
-                            selected = navigationItem.route == currentDestination?.route,
-                            label = {
-                                Text(navigationItem.label)
-                            },
-                            icon = {
-                                Icon(
-                                    navigationItem.icon,
-                                    contentDescription = navigationItem.label
-                                )
-                            },
-                            onClick = {
-                                navController.navigate(navigationItem.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            alwaysShowLabel = false,
-                        )
-                    }
-            }
-        }
-    ) { paddingValues ->
+            .detectInactivity(inactivityHandler)
+    ) {
         NavHost(
             navController = navController,
             startDestination = Screens.Time.route,
-            modifier = Modifier.padding(paddingValues = paddingValues)
+            modifier = Modifier.fillMaxSize()
         ) {
             composable(Screens.Time.route) {
                 TimeScreen()
@@ -164,16 +162,15 @@ fun BottomNavigationBarWithPermissions(
             }
             composable(Screens.Events.route) {
                 NavigateWithPermissions(
-                    listOf(READ_CALENDAR),
-                    navController,
+                    requiredPermissions = listOf(READ_CALENDAR),
+                    onPermissionDenied = navigateToHome,
                     destinationScreen = { EventsScreen() },
-                    stringResource(
+                    errorMessage = stringResource(
                         R.string.calendar_permission_denied_cannot_access_events,
                     )
                 )
             }
             composable(Screens.Actions.route) {
-
                 val permissions = mutableListOf(CAMERA, CALL_PHONE).also {
                     if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                         it += WRITE_EXTERNAL_STORAGE
@@ -184,10 +181,10 @@ fun BottomNavigationBarWithPermissions(
                 }
 
                 NavigateWithPermissions(
-                    permissions,
-                    navController,
+                    requiredPermissions = permissions,
+                    onPermissionDenied = navigateToHome,
                     destinationScreen = { ActionsScreen() },
-                    stringResource(
+                    errorMessage = stringResource(
                         R.string.required_permissions_denied_cannot_access_actions
                     ),
                 )
@@ -202,11 +199,10 @@ fun BottomNavigationBarWithPermissions(
 @Composable
 fun NavigateWithPermissions(
     requiredPermissions: List<String>,
-    navController: NavController,
+    onPermissionDenied: () -> Unit,
     destinationScreen: @Composable () -> Unit,
     errorMessage: String = stringResource(R.string.required_permissions_denied_cannot_access_screen),
 ) {
-    var hasNavigated by remember { mutableStateOf(false) }
     var showSnackbar by remember { mutableStateOf(false) }
 
     // Resolve the string safely here in the Composable scope
@@ -224,16 +220,8 @@ fun NavigateWithPermissions(
         requiredPermissions = requiredPermissions,
         onPermissionGranted = { destinationScreen() },
         onPermissionDenied = {
-            if (!hasNavigated) {
-                hasNavigated = true
-
-                // Use SideEffect or just set state to trigger the snackbar
-                showSnackbar = true
-
-                navController.navigate(Screens.Time.route) {
-                    popUpTo(Screens.Time.route) { inclusive = true }
-                }
-            }
+            showSnackbar = true
+            onPermissionDenied()
         }
     )
 }
@@ -242,7 +230,7 @@ fun NavigateWithPermissions(
 fun PermissionRequiredScreen(
     requiredPermissions: List<String>,
     onPermissionGranted: @Composable () -> Unit,
-    onPermissionDenied: @Composable () -> Unit
+    onPermissionDenied: () -> Unit
 ) {
     var permissionGranted by remember { mutableStateOf(false) }
     var permissionChecked by remember { mutableStateOf(false) }
@@ -259,11 +247,13 @@ fun PermissionRequiredScreen(
         launcher.launch(requiredPermissions.toTypedArray())
     }
 
-    if (permissionChecked) {
-        if (permissionGranted) {
-            onPermissionGranted() // Safe to call @Composable here
-        } else {
-            onPermissionDenied()  // Safe to call @Composable here
+    LaunchedEffect(permissionChecked, permissionGranted) {
+        if (permissionChecked && !permissionGranted) {
+            onPermissionDenied()
         }
+    }
+
+    if (permissionChecked && permissionGranted) {
+        onPermissionGranted()
     }
 }

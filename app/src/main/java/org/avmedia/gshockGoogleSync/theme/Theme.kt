@@ -41,6 +41,11 @@ private val LightColorScheme =
                 surfaceVariant = SurfaceVariantLight,
                 onSurfaceVariant = OnSurfaceVariantLight,
                 outline = OutlineLight,
+                surfaceContainerLowest = SurfaceContainerLowestLight,
+                surfaceContainerLow = SurfaceContainerLowLight,
+                surfaceContainer = SurfaceContainerLight,
+                surfaceContainerHigh = SurfaceContainerHighLight,
+                surfaceContainerHighest = SurfaceContainerHighestLight,
         )
 
 private val DarkColorScheme =
@@ -68,14 +73,27 @@ private val DarkColorScheme =
                 surfaceVariant = SurfaceVariantDark,
                 onSurfaceVariant = OnSurfaceVariantDark,
                 outline = OutlineDark,
+                surfaceContainerLowest = SurfaceContainerLowestDark,
+                surfaceContainerLow = SurfaceContainerLowDark,
+                surfaceContainer = SurfaceContainerDark,
+                surfaceContainerHigh = SurfaceContainerHighDark,
+                surfaceContainerHighest = SurfaceContainerHighestDark,
         )
 
 // Composable function to provide the color scheme based on Android version and theme
 @Composable
-fun getCurrentColorScheme(darkTheme: Boolean): ColorScheme {
+fun getCurrentColorScheme(
+        darkTheme: Boolean = isSystemInDarkTheme(),
+        dynamicColor: Boolean = true
+): ColorScheme {
     val context = LocalContext.current
-
-    return if (darkTheme) DarkColorScheme else LightColorScheme
+    return when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
+    }
 }
 
 @Composable

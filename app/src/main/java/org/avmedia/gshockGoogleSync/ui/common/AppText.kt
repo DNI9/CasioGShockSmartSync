@@ -1,9 +1,7 @@
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -35,16 +33,15 @@ fun AppText(
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     style: TextStyle = TextStyle.Default
 ) {
-    val currentFontScale = LocalDensity.current.fontScale
-    val fixedFontSizeStyle = TextStyle(
-        fontSize = (fontSize / currentFontScale),
+    val textStyle = TextStyle(
+        fontSize = fontSize,
         color = color
     ).merge(style)
 
     Text(
         text = text,
         modifier = modifier,
-        style = fixedFontSizeStyle,
+        style = textStyle,
         fontStyle = fontStyle,
         fontWeight = fontWeight,
         fontFamily = fontFamily,

@@ -43,15 +43,12 @@ import java.util.Locale
 fun AlarmItem(
     hours: Int = 12,
     minutes: Int = 0,
-    name : String? = null,
+    name: String? = null,
     isAlarmEnabled: Boolean = true,
     onToggleAlarm: (Boolean) -> Unit,
     onTimeChanged: (Int, Int) -> Unit
 ) {
-    var isEnabled by remember { mutableStateOf(isAlarmEnabled) }
     var showTimePickerDialog by remember { mutableStateOf(false) }
-    var alarmHours by remember { mutableIntStateOf(hours) }
-    var alarmMinutes by remember { mutableIntStateOf(minutes) }
 
     val localContext = LocalContext.current.applicationContext
     val appContext = remember {
@@ -69,7 +66,7 @@ fun AlarmItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp),
+                .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -80,7 +77,7 @@ fun AlarmItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AppTextExtraLarge(
-                    text = formatTime(alarmHours, alarmMinutes, appContext),
+                    text = formatTime(hours, minutes, appContext),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -89,11 +86,11 @@ fun AlarmItem(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 val alarmName = if (name.isNullOrBlank()) stringResource(id = R.string.daily) else name
-                AppText(text = alarmName)            }
+                AppText(text = alarmName)
+            }
             AppSwitch(
-                checked = isEnabled,
+                checked = isAlarmEnabled,
                 onCheckedChange = { checked ->
-                    isEnabled = checked
                     onToggleAlarm(checked)
                 }
             )
@@ -109,14 +106,12 @@ fun AlarmItem(
             ) {
                 AppTimePicker(
                     onConfirm = { state ->
-                        alarmHours = state.hour
-                        alarmMinutes = state.minute
-                        onTimeChanged(alarmHours, alarmMinutes)
+                        onTimeChanged(state.hour, state.minute)
                         showTimePickerDialog = false
                     },
                     onDismiss = { showTimePickerDialog = false },
-                    initialHour = alarmHours,
-                    initialMinute = alarmMinutes,
+                    initialHour = hours,
+                    initialMinute = minutes,
                 )
             }
         }

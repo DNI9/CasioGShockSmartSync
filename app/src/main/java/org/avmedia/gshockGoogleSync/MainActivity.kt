@@ -2,6 +2,7 @@ package org.avmedia.gshockGoogleSync
 
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -36,6 +37,8 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var watchFeatureManager: IWatchFeatureManager
+
+    private val rootViewModel: RootViewModel by viewModels()
 
     private val application: GShockApplication
         get() = applicationContext as GShockApplication
@@ -97,11 +100,10 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier.fillMaxSize(),
                                     color = MaterialTheme.colorScheme.background
                                 ) {
-                                    // Note: If AppContainer uses 'contentPadding', it will still
-                                    // push content away from edges. To take over the WHOLE screen,
-                                    // you can pass 'PaddingValues(0.dp)' or ignore it inside the
-                                    // AppContainer.
-                                    application.AppContainer(contentPadding)
+                                    RootScreen(
+                                        viewModel = rootViewModel,
+                                        contentPadding = contentPadding
+                                    )
                                     PopupMessageReceiver()
                                 }
                             }

@@ -20,72 +20,50 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import org.avmedia.gshockGoogleSync.R
 import org.avmedia.gshockGoogleSync.theme.GShockSmartSyncTheme
 import org.avmedia.gshockGoogleSync.ui.common.AppSnackbar
 import org.avmedia.gshockGoogleSync.ui.common.ButtonData
 import org.avmedia.gshockGoogleSync.ui.common.ButtonsRow
 import org.avmedia.gshockGoogleSync.ui.common.InfoButton
-import org.avmedia.gshockGoogleSync.ui.common.LocalWatchFeatureManager
 import org.avmedia.gshockGoogleSync.ui.common.ScreenTitle
 import org.avmedia.gshockGoogleSync.ui.common.WatchFeature
 import org.avmedia.gshockGoogleSync.utils.Utils
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    settingsViewModel: SettingsViewModel = hiltViewModel()
+) {
     GShockSmartSyncTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-                val (title, settingsLayout, buttonsRow) = createRefs()
-
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 ScreenTitle(
                     stringResource(id = R.string.settings),
-                    Modifier.constrainAs(title) {
-                        top.linkTo(
-                            parent.top
-                        ) // Link top of content to parent top
-                        bottom.linkTo(
-                            settingsLayout.top
-                        ) // Link bottom of content to top of buttonsRow
-                    }
                 )
 
                 Column(
-                    modifier =
-                    Modifier
-                        .constrainAs(settingsLayout) {
-                            top.linkTo(title.bottom)
-                            bottom.linkTo(buttonsRow.top)
-                            height = Dimension.fillToConstraints
-                        }
-                        .verticalScroll(
-                            rememberScrollState()
-                        ) // Make content scrollable
-                        .padding(0.dp)
+                    modifier = Modifier
+                        .weight(1f)
                         .fillMaxWidth()
-                        .fillMaxSize()
-                ) { SettingsList() }
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    SettingsList(settingsViewModel = settingsViewModel)
+                }
 
                 BottomRow(
-                    modifier =
-                    Modifier.constrainAs(buttonsRow) {
-                        top.linkTo(
-                            settingsLayout.bottom
-                        ) // Link top of buttonsRow to bottom of
-                        // content
-                        bottom.linkTo(
-                            parent.bottom
-                        ) // Keep buttons at the bottom
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    settingsViewModel = settingsViewModel
                 )
             }
         }
@@ -93,9 +71,9 @@ fun SettingsScreen() {
 }
 
 @Composable
-fun SettingsList() {
-    val settingsViewModel: SettingsViewModel = hiltViewModel()
-
+fun SettingsList(
+    settingsViewModel: SettingsViewModel = hiltViewModel()
+) {
     LaunchedEffect(Unit) {
         settingsViewModel.uiEvents.collect { event ->
             when (event) {
@@ -106,7 +84,10 @@ fun SettingsList() {
         }
     }
 
-    Column(modifier = Modifier) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         WatchFeature(id = "locale_card") {
             Locale(settingsViewModel::onSettingUpdated)
         }
@@ -116,7 +97,6 @@ fun SettingsList() {
         WatchFeature(id = "light_card") {
             Light(settingsViewModel::onSettingUpdated)
         }
-
         WatchFeature(id = "power_saving_card") {
             PowerSavings(settingsViewModel::onSettingUpdated)
         }
@@ -130,26 +110,27 @@ fun SettingsList() {
 }
 
 @Composable
-fun BottomRow(modifier: Modifier, settingsViewModel: SettingsViewModel = hiltViewModel()) {
+fun BottomRow(
+    modifier: Modifier = Modifier,
+    settingsViewModel: SettingsViewModel = hiltViewModel()
+) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Bottom,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically, // Center vertically
-            horizontalArrangement =
-            Arrangement.SpaceEvenly, // Arrange horizontally, starting from the
-            // left
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth()
-                    .padding(end = 0.dp),
-                contentAlignment =
-                Alignment.CenterEnd // Aligns content to the right
-            ) { InfoButton(infoText = stringResource(id = R.string.auto_fill_help)) }
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                InfoButton(infoText = stringResource(id = R.string.auto_fill_help))
+            }
 
             val buttons =
                 arrayListOf(
@@ -157,9 +138,7 @@ fun BottomRow(modifier: Modifier, settingsViewModel: SettingsViewModel = hiltVie
                         text =
                         Utils.shortenStringNewLine(
                             stringResource(
-                                id =
-                                R.string
-                                    .auto_configure_settings
+                                id = R.string.auto_configure_settings
                             ),
                             15,
                             "AUTO"

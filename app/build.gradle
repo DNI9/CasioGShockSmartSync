@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
     android {
@@ -65,9 +66,6 @@ plugins {
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = '1.5.0'
-    }
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
@@ -82,14 +80,17 @@ dependencies {
     implementation(libs.gshockapi)
     // implementation project(':api')
 
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material3)
+    implementation(libs.material3.adaptive.navigation.suite)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
     implementation libs.transport.api
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -109,7 +110,6 @@ dependencies {
     implementation (libs.timber)
     implementation(libs.sunrisesunsetcalculator)
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.hilt.navigation.fragment)
     implementation(libs.androidx.lifecycle.service)
 
     implementation(libs.compose.ui)
@@ -129,3 +129,4 @@ dependencies {
 kapt {
     correctErrorTypes = true
 }
+

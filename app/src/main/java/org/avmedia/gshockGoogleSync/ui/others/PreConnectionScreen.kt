@@ -47,13 +47,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -101,10 +102,10 @@ fun PreConnectionScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val watchName by ptrConnectionViewModel.watchName.collectAsState()
-    val triggerPairing by ptrConnectionViewModel.triggerPairing.collectAsState()
-    val pairedDevices by ptrConnectionViewModel.pairedDevices.collectAsState()
-    val showPreparing by ptrConnectionViewModel.showPreparing.collectAsState()
+    val watchName by ptrConnectionViewModel.watchName.collectAsStateWithLifecycle()
+    val triggerPairing by ptrConnectionViewModel.triggerPairing.collectAsStateWithLifecycle()
+    val pairedDevices by ptrConnectionViewModel.pairedDevices.collectAsStateWithLifecycle()
+    val showPreparing by ptrConnectionViewModel.showPreparing.collectAsStateWithLifecycle()
 
     val timeoutJob = remember { mutableStateOf<Job?>(null) }
 
@@ -423,15 +424,25 @@ fun PairedDeviceList(
 
 @Composable
 fun RemoveButton(onClick: () -> Unit) {
-    Box(
-        modifier =
-            Modifier
-                .size(18.dp)
-                .border(0.5.dp, Color.White.copy(alpha = 0.5f), CircleShape)
-                .background(Color.Black, CircleShape)
-                .clickable(onClick = onClick, role = Role.Button),
-        contentAlignment = Alignment.Center
-    ) { Icon(Icons.Default.Remove, "Remove", modifier = Modifier.size(12.dp), tint = Color.White) }
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.size(48.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(24.dp)
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
+                .background(MaterialTheme.colorScheme.errorContainer, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                Icons.Default.Remove,
+                contentDescription = stringResource(R.string.delete),
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.onErrorContainer
+            )
+        }
+    }
 }
 
 @Composable
@@ -440,7 +451,7 @@ fun PairButton(modifier: Modifier = Modifier, onClick: () -> Unit, isFlashing: B
     val alpha by
     transition.animateFloat(
         initialValue = 1f,
-        targetValue = 0.2f,
+        targetValue = 0.35f,
         animationSpec =
             infiniteRepeatable(
                 tween(1000, easing = LinearEasing),
@@ -461,15 +472,21 @@ fun PairButton(modifier: Modifier = Modifier, onClick: () -> Unit, isFlashing: B
                 Modifier
                     .size(56.dp)
                     .alpha(if (isFlashing) alpha else 1f)
-                    .border(1.dp, Color.White, CircleShape),
+                    .border(1.5.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape),
             shape = CircleShape,
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ),
             contentPadding = PaddingValues(0.dp)
-        ) { Icon(Icons.Default.Add, "Add", modifier = Modifier.size(32.dp)) }
+        ) {
+            Icon(
+                Icons.Default.Add,
+                contentDescription = stringResource(R.string.add_watch),
+                modifier = Modifier.size(32.dp)
+            )
+        }
     }
 }
 
