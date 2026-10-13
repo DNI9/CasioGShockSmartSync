@@ -2,7 +2,6 @@ package org.avmedia.gshockGoogleSync.ui.time
 
 import AppText
 import AppTextLarge
-import RealTimeClock
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

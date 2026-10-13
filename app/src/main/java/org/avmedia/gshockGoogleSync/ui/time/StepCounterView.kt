@@ -13,9 +13,15 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
@@ -130,7 +136,7 @@ fun StepCounterView(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .androidx.compose.foundation.layout.heightIn(min = 140.dp),
+                            .heightIn(min = 140.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(
@@ -252,8 +258,8 @@ private fun StepsProgressRing(
     val percentInt = (progress * 100).toInt()
 
     Box(
-        modifier = modifier.androidx.compose.ui.semantics.semantics(mergeDescendants = true) {
-            this.progressBarRangeInfo = androidx.compose.ui.semantics.ProgressBarRangeInfo(
+        modifier = modifier.semantics(mergeDescendants = true) {
+            this.progressBarRangeInfo = ProgressBarRangeInfo(
                 current = currentSteps.toFloat(),
                 range = 0f..goal.coerceAtLeast(1).toFloat()
             )

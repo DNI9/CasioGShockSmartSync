@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -27,12 +28,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import dagger.hilt.android.EntryPointAccessors
 import org.avmedia.gshockGoogleSync.R
 import org.avmedia.gshockGoogleSync.di.ApplicationContextEntryPoint
+import org.avmedia.gshockGoogleSync.theme.LocalChronoLcdTypography
 import org.avmedia.gshockGoogleSync.ui.common.AppCard
 import org.avmedia.gshockGoogleSync.ui.common.AppTimePicker
 import java.util.Date
@@ -66,15 +72,6 @@ fun AlarmItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(0.dp)
-            .androidx.compose.ui.semantics.semantics(mergeDescendants = true) {
-                this.contentDescription = "Alarm: $formattedTime, $alarmLabel. Status: $statusText"
-                this.customActions = listOf(
-                    androidx.compose.ui.semantics.CustomAccessibilityAction(label = "Edit alarm time") {
-                        showTimePickerDialog = true
-                        true
-                    }
-                )
-            },
     ) {
         Row(
             modifier = Modifier
@@ -86,18 +83,21 @@ fun AlarmItem(
             Row(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 8.dp),
+                    .padding(end = 8.dp)
+                    .clickable(role = Role.Button) { showTimePickerDialog = true }
+                    .semantics {
+                        contentDescription = "Alarm: $formattedTime, $alarmLabel"
+                        role = Role.Button
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                androidx.compose.material3.Text(
+                Text(
                     text = formattedTime,
-                    style = org.avmedia.gshockGoogleSync.theme.LocalChronoLcdTypography.current.lcdTimerReadout,
+                    style = LocalChronoLcdTypography.current.lcdTimerReadout,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .clickable { showTimePickerDialog = true },
+                    modifier = Modifier.padding(4.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 AppText(
